@@ -239,7 +239,8 @@ export default {
     category: 'Category',
     orderStatus: 'Order Status',
     all: 'All',
-    allMonths: 'All Months'
+    allMonths: 'All Months',
+    resetAll: 'Reset all filters'
   },
 
   // Statuses
@@ -395,6 +396,12 @@ export default {
     loading: 'Loading backlog...',
     loadError: 'Failed to load backlog. Please try again.',
     itemsTitle: 'Backlog Items',
+    noMatches: 'No items match the current filters.',
+    dayOne: '1 day',
+    daysCount: '{count} days',
+    table: {
+      sku: 'SKU'
+    },
     stats: {
       highPriority: 'High Priority',
       mediumPriority: 'Medium Priority',

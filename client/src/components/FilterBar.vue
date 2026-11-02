@@ -104,32 +104,33 @@ export default {
 .filters-bar {
   background: #f8fafc;
   border-bottom: 1px solid #e2e8f0;
-  padding: 0.75rem 0;
+  padding: var(--space-3) 0;
   position: sticky;
-  top: 70px;
+  top: 0;
   z-index: 90;
 }
 
 .filters-container {
   max-width: 1600px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 var(--space-8);
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .filters-grid {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-3) var(--space-4);
   flex: 1;
 }
 
 .filter-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .filter-group label {
@@ -190,5 +191,32 @@ export default {
 .reset-filters-btn svg {
   width: 18px;
   height: 18px;
+}
+
+@media (max-width: 767px) {
+  .filters-bar {
+    position: static;
+  }
+
+  .filters-container {
+    padding: 0 var(--space-4);
+    align-items: flex-start;
+  }
+
+  .filters-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-1);
+  }
+
+  .filter-select {
+    min-width: 0;
+    width: 100%;
+  }
 }
 </style>

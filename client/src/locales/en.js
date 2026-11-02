@@ -6,6 +6,16 @@ export default {
     orders: 'Orders',
     finance: 'Finance',
     demandForecast: 'Demand Forecast',
+    restocking: 'Restocking',
+    reports: 'Reports',
+    groupOperations: 'Operations',
+    groupPlanning: 'Planning',
+    groupFinance: 'Finance',
+    primaryNav: 'Primary navigation',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu',
+    collapseSidebar: 'Collapse sidebar',
+    expandSidebar: 'Expand sidebar',
     companyName: 'Catalyst Components',
     subtitle: 'Inventory Management System'
   },
@@ -112,6 +122,10 @@ export default {
     onTimeDelivery: 'On-Time Delivery',
     itemsCount: '{count} items',
     quantity: 'Qty',
+    submittedOrders: 'Submitted Orders',
+    submittedEmpty: 'No submitted orders. Orders placed from the Restocking tab appear here.',
+    leadTime: 'Lead Time',
+    leadTimeDays: '{days} days',
     table: {
       orderNumber: 'Order Number',
       orderId: 'Order ID',
@@ -126,6 +140,35 @@ export default {
       status: 'Status',
       expectedDelivery: 'Expected Delivery',
       actualDelivery: 'Actual Delivery'
+    }
+  },
+
+  // Restocking
+  restocking: {
+    title: 'Restocking',
+    description: 'Choose a budget and order the units needed to meet forecasted demand',
+    budget: 'Budget',
+    recommendedItems: 'Recommended Items',
+    noRecommendations: 'No items can be restocked within this budget.',
+    selectItem: 'Select {name}',
+    selectedCost: 'Order Total',
+    remainingBudget: 'Remaining Budget',
+    leadTime: 'Estimated Lead Time',
+    placeOrder: 'Place Order',
+    submitting: 'Submitting...',
+    loadFailed: 'Failed to load recommendations',
+    orderFailed: 'Failed to place order',
+    orderSuccess: 'Order {orderNumber} submitted. Lead time: {days} days.',
+    overBudget: 'Selected items exceed the budget.',
+    table: {
+      sku: 'SKU',
+      item: 'Item',
+      currentStock: 'In Stock',
+      forecastedDemand: 'Forecasted Demand',
+      recommended: 'Recommended Units',
+      quantity: 'Order Qty',
+      unitCost: 'Unit Cost',
+      total: 'Total'
     }
   },
 
@@ -204,6 +247,7 @@ export default {
     shipped: 'Shipped',
     processing: 'Processing',
     backordered: 'Backordered',
+    submitted: 'Submitted',
     inStock: 'In Stock',
     lowStock: 'Low Stock',
     adequate: 'Adequate'

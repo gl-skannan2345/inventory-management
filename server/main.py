@@ -1,7 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional
-from pydantic import BaseModel
+from datetime import datetime, timedelta
+from pydantic import BaseModel, Field
 from mock_data import inventory_items, orders, demand_forecasts, backlog_items, spending_summary, monthly_spending, category_spending, recent_transactions, purchase_orders
 
 app = FastAPI(title="Factory Inventory Management System")
@@ -80,6 +81,31 @@ class Order(BaseModel):
     actual_delivery: Optional[str] = None
     warehouse: Optional[str] = None
     category: Optional[str] = None
+    # Only set on orders created through /api/restocking/orders
+    lead_time_days: Optional[int] = None
+
+class RestockingRecommendation(BaseModel):
+    sku: str
+    name: str
+    current_stock: int
+    forecasted_demand: int
+    units: int
+    unit_cost: float
+    total_cost: float
+
+class RestockingRecommendationsResponse(BaseModel):
+    budget: float
+    total_cost: float
+    remaining_budget: float
+    lead_time_days: int
+    items: List[RestockingRecommendation]
+
+class RestockingOrderItem(BaseModel):
+    sku: str
+    quantity: int = Field(gt=0)
+
+class CreateRestockingOrderRequest(BaseModel):
+    items: List[RestockingOrderItem] = Field(min_length=1)
 
 class DemandForecast(BaseModel):
     id: str
@@ -303,6 +329,127 @@ def get_monthly_trends():
     result = list(months.values())
     result.sort(key=lambda x: x['month'])
     return result
+
+def average_lead_time_days() -> int:
+    """Average delivery lead time, in whole days, across historical orders.
+
+    Lead time is expected_delivery - order_date. Orders with missing or
+    unparseable dates are skipped so one bad record cannot break restocking.
+    Falls back to 14 days if no usable history exists.
+    """
+    durations = []
+    for order in orders:
+        try:
+            ordered = datetime.fromisoformat(order["order_date"])
+            expected = datetime.fromisoformat(order["expected_delivery"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        durations.append((expected - ordered).total_seconds() / 86400)
+
+    if not durations:
+        return 14
+    # Round to nearest day so every order shows a whole-day lead time
+    return round(sum(durations) / len(durations))
+
+def find_inventory_by_sku(sku: str) -> Optional[dict]:
+    """Return the first inventory row for a SKU, or None."""
+    return next((item for item in inventory_items if item["sku"] == sku), None)
+
+@app.get("/api/restocking/recommendations", response_model=RestockingRecommendationsResponse)
+def get_restocking_recommendations(budget: float = Query(ge=0)):
+    """Recommend forecast items to restock that fit within the budget.
+
+    Units per item = forecasted_demand - current stock (floored at 0), so only
+    the shortfall is ordered. Items are taken in order of largest shortfall
+    first. Greedy selection: an item is skipped if it would exceed the
+    remaining budget, but later, cheaper items can still be added.
+    """
+    candidates = []
+    for forecast in demand_forecasts:
+        inventory = find_inventory_by_sku(forecast["item_sku"])
+        if not inventory:
+            # Forecast has no matching inventory row, so no cost is known
+            continue
+
+        # Stock is summed across warehouses; cost comes from the first row
+        current_stock = sum(
+            item["quantity_on_hand"] for item in inventory_items
+            if item["sku"] == forecast["item_sku"]
+        )
+        units = max(0, forecast["forecasted_demand"] - current_stock)
+        if units == 0:
+            continue
+
+        candidates.append({
+            "sku": forecast["item_sku"],
+            "name": forecast["item_name"],
+            "current_stock": current_stock,
+            "forecasted_demand": forecast["forecasted_demand"],
+            "units": units,
+            "unit_cost": inventory["unit_cost"],
+        })
+
+    candidates.sort(key=lambda c: c["units"], reverse=True)
+
+    selected = []
+    spent = 0.0
+    for candidate in candidates:
+        cost = round(candidate["units"] * candidate["unit_cost"], 2)
+        if spent + cost > budget:
+            continue
+        spent += cost
+        selected.append(RestockingRecommendation(**candidate, total_cost=cost))
+
+    total = round(spent, 2)
+    return RestockingRecommendationsResponse(
+        budget=budget,
+        total_cost=total,
+        remaining_budget=round(budget - total, 2),
+        lead_time_days=average_lead_time_days(),
+        items=selected,
+    )
+
+@app.post("/api/restocking/orders", response_model=Order, status_code=201)
+def create_restocking_order(request: CreateRestockingOrderRequest):
+    """Submit a restocking order and add it to the in-memory orders list.
+
+    Prices come from the server's inventory unit_cost, never from the client,
+    so the total cannot be tampered with. The order is kept in memory only and
+    resets when the server restarts, like the other mock data.
+    """
+    line_items = []
+    for requested in request.items:
+        inventory = find_inventory_by_sku(requested.sku)
+        if not inventory:
+            raise HTTPException(status_code=400, detail=f"Unknown SKU {requested.sku}")
+        line_items.append({
+            "sku": requested.sku,
+            "name": inventory["name"],
+            "quantity": requested.quantity,
+            "unit_price": inventory["unit_cost"],
+        })
+
+    lead_time = average_lead_time_days()
+    order_date = datetime.now().replace(microsecond=0)
+    expected = order_date + timedelta(days=lead_time)
+    next_id = max((int(o["id"]) for o in orders), default=0) + 1
+
+    new_order = {
+        "id": str(next_id),
+        "order_number": f"RST-{order_date.year}-{next_id:04d}",
+        "customer": "Internal Restocking",
+        "items": line_items,
+        "status": "Submitted",
+        "warehouse": None,
+        "category": None,
+        "order_date": order_date.isoformat(),
+        "expected_delivery": expected.isoformat(),
+        "total_value": round(sum(i["quantity"] * i["unit_price"] for i in line_items), 2),
+        "actual_delivery": None,
+        "lead_time_days": lead_time,
+    }
+    orders.append(new_order)
+    return new_order
 
 if __name__ == "__main__":
     import uvicorn

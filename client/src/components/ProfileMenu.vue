@@ -2,6 +2,7 @@
   <div class="profile-menu">
     <button
       class="profile-button"
+      :aria-label="currentUser.name"
       @click="toggleDropdown"
       @blur="handleBlur"
     >

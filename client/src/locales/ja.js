@@ -239,7 +239,8 @@ export default {
     category: 'カテゴリ',
     orderStatus: '注文ステータス',
     all: 'すべて',
-    allMonths: 'すべての月'
+    allMonths: 'すべての月',
+    resetAll: 'すべてのフィルターをリセット'
   },
 
   // Statuses
@@ -395,6 +396,12 @@ export default {
     loading: 'バックログを読み込み中...',
     loadError: 'バックログの読み込みに失敗しました。もう一度お試しください。',
     itemsTitle: 'バックログ項目',
+    noMatches: '現在のフィルターに一致する項目はありません。',
+    dayOne: '{count}日',
+    daysCount: '{count}日',
+    table: {
+      sku: 'SKU（商品コード）'
+    },
     stats: {
       highPriority: '優先度：高',
       mediumPriority: '優先度：中',

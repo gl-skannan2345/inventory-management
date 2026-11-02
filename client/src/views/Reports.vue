@@ -471,5 +471,13 @@ export default {
     padding: var(--space-4) 0;
     overflow-x: auto;
   }
+
+  /* Scroll cue: wide tables scroll inside the container, so fade the right
+     edge to hint that more columns exist. CSS-only; cells have opaque
+     backgrounds, so a background-attachment shadow would be hidden. */
+  .table-container {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  }
 }
 </style>

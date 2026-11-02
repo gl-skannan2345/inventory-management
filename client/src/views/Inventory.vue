@@ -311,6 +311,8 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  /* Wrap so the title and actions stack instead of overflowing the card when space is tight */
+  flex-wrap: wrap;
   gap: var(--space-4);
   padding: 0 0 var(--space-4);
   border-bottom: 1px solid #e2e8f0;
@@ -326,7 +328,25 @@ export default {
 .header-actions {
   display: flex;
   align-items: center;
+  /* Allow the search box and Export CSV to wrap rather than push past the card edge */
+  flex-wrap: wrap;
+  /* Grow into the free header space (right-aligned): the search input's intrinsic width is
+     narrower than its 300px basis, so sizing to content alone wrapped the button on desktop */
+  flex: 1 1 auto;
+  justify-content: flex-end;
   gap: 0.75rem;
+}
+
+/* Phone width: let the search box take its own row so Export CSV stays on screen */
+@media (max-width: 480px) {
+  .header-actions {
+    flex-wrap: wrap;
+  }
+
+  .header-actions .search-box {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
 }
 
 .export-btn {
@@ -357,7 +377,10 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
-  min-width: min(300px, 100%);
+  /* Explicit 300px basis keeps the header's intrinsic width correct (percent min-width made it
+     collapse and wrap on desktop); min-width: 0 lets it shrink instead of overflowing */
+  flex: 0 1 300px;
+  min-width: 0;
 }
 
 .search-icon {

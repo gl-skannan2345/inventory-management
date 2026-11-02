@@ -58,6 +58,16 @@
         <span v-if="pendingTaskCount > 0" class="task-badge">{{ pendingTaskCount }}</span>
       </button>
 
+      <button
+        class="dropdown-item"
+        @mousedown.prevent="goToBacklog"
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M3 5H15M3 9H15M3 13H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        {{ t('backlog.title') }}
+      </button>
+
       <div class="dropdown-divider"></div>
 
       <button
@@ -76,11 +86,13 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 import { useI18n } from '../composables/useI18n'
 
 const { currentUser, logout, getInitials } = useAuth()
 const { t } = useI18n()
+const router = useRouter()
 
 const isDropdownOpen = ref(false)
 const emit = defineEmits(['show-profile-details', 'show-tasks'])
@@ -108,6 +120,13 @@ const showProfileDetails = () => {
 const showTasks = () => {
   isDropdownOpen.value = false
   emit('show-tasks')
+}
+
+// Backlog is intentionally absent from the sidebar nav; this menu is its only entry point.
+// Navigate imperatively because items use @mousedown.prevent (a router-link click would fire after blur closes the menu).
+const goToBacklog = () => {
+  isDropdownOpen.value = false
+  router.push('/backlog')
 }
 
 const handleLogout = () => {

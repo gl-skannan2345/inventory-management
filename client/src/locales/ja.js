@@ -90,6 +90,7 @@ export default {
     skus: 'SKU',
     searchPlaceholder: '品目名で検索...',
     clearSearch: '検索をクリア',
+    exportCsv: 'CSVエクスポート',
     totalItems: '総品目数',
     totalValue: '総価値',
     lowStockItems: '在庫僅少品目',
@@ -353,6 +354,53 @@ export default {
     english: 'English',
     japanese: '日本語',
     selectLanguage: '言語を選択'
+  },
+
+  // Reports
+  reports: {
+    title: 'パフォーマンスレポート',
+    description: '四半期ごとの業績指標と月次トレンドを表示します',
+    loading: 'レポートを読み込み中...',
+    loadError: 'レポートの読み込みに失敗しました。もう一度お試しください。',
+    empty: '現在のフィルターに一致するレポートデータがありません。',
+    quarterlyPerformance: '四半期業績',
+    monthlyRevenueTrend: '月次売上トレンド',
+    monthOverMonth: '前月比分析',
+    table: {
+      quarter: '四半期',
+      totalOrders: '総注文数',
+      totalRevenue: '総売上',
+      avgOrderValue: '平均注文額',
+      fulfillmentRate: '出荷達成率',
+      month: '月',
+      orders: '注文数',
+      revenue: '売上',
+      change: '増減',
+      growthRate: '成長率'
+    },
+    stats: {
+      totalRevenue: '総売上（年初来）',
+      avgMonthlyRevenue: '月平均売上',
+      totalOrders: '総注文数（年初来）',
+      bestQuarter: '最高業績の四半期'
+    },
+    placeholder: '-',
+    notAvailable: '該当なし'
+  },
+
+  // Backlog (table headers, empty state, unit/day suffixes reuse dashboard.inventoryShortages.*; priority labels reuse priority.*)
+  backlog: {
+    title: 'バックログ管理',
+    description: '在庫不足の追跡と解消を行います',
+    loading: 'バックログを読み込み中...',
+    loadError: 'バックログの読み込みに失敗しました。もう一度お試しください。',
+    itemsTitle: 'バックログ項目',
+    stats: {
+      highPriority: '優先度：高',
+      mediumPriority: '優先度：中',
+      lowPriority: '優先度：低',
+      totalItems: 'バックログ項目の合計'
+    }
   },
 
   // Common

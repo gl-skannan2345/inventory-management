@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import './styles/tokens.css'
+import { initTheme } from './composables/useTheme'
 import App from './App.vue'
 import Dashboard from './views/Dashboard.vue'
 import Inventory from './views/Inventory.vue'
@@ -26,6 +27,9 @@ const router = createRouter({
     { path: '/backlog', component: Backlog }
   ]
 })
+
+// Apply the stored/system theme before createApp so the first paint is already correct
+initTheme()
 
 const app = createApp(App)
 app.use(router)

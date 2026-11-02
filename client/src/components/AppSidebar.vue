@@ -3,6 +3,7 @@ import { ref, computed, watch, nextTick } from 'vue'
 import LanguageSwitcher from './LanguageSwitcher.vue'
 import ProfileMenu from './ProfileMenu.vue'
 import { useI18n } from '../composables/useI18n'
+import { useTheme } from '../composables/useTheme'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -11,6 +12,8 @@ const props = defineProps({
 const emit = defineEmits(['close', 'toggle-collapse', 'show-profile-details', 'show-tasks'])
 
 const { t } = useI18n()
+const { theme, toggleTheme } = useTheme()
+const themeLabel = computed(() => (theme.value === 'dark' ? t('nav.themeToLight') : t('nav.themeToDark')))
 const sidebarEl = ref(null)
 
 // Inline SVG icon paths (24x24 viewBox, stroke based)
@@ -147,6 +150,22 @@ const onKeydown = (event) => {
     </nav>
 
     <div class="sidebar-footer">
+      <button
+        type="button"
+        class="theme-toggle"
+        :aria-label="themeLabel"
+        :title="themeLabel"
+        @click="toggleTheme"
+      >
+        <svg v-if="theme === 'dark'" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+        </svg>
+        <svg v-else viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" />
+        </svg>
+        <span class="theme-label">{{ themeLabel }}</span>
+      </button>
       <LanguageSwitcher />
       <ProfileMenu
         @show-profile-details="emit('show-profile-details')"
@@ -305,6 +324,30 @@ const onKeydown = (event) => {
   border-top: 1px solid var(--sidebar-border);
 }
 
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: var(--sidebar-hover);
+  border: 1px solid var(--sidebar-border);
+  border-radius: var(--radius-md);
+  color: var(--sidebar-text);
+  font: inherit;
+  font-size: var(--font-size-dense);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--sidebar-hover-strong);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--sidebar-accent);
+  outline-offset: 2px;
+}
+
 /* Restyle relocated controls for the dark surface; menus open upward */
 .sidebar-footer :deep(.language-button),
 .sidebar-footer :deep(.profile-button) {
@@ -317,7 +360,7 @@ const onKeydown = (event) => {
 
 .sidebar-footer :deep(.language-button:hover),
 .sidebar-footer :deep(.profile-button:hover) {
-  background: #273449;
+  background: var(--sidebar-hover-strong);
   border-color: #334155;
 }
 
@@ -409,12 +452,14 @@ const onKeydown = (event) => {
   }
 
   /* Footer controls become icon-only; menus fly out to the right */
+  .is-collapsed .theme-label,
   .is-collapsed .sidebar-footer :deep(.language-label),
   .is-collapsed .sidebar-footer :deep(.chevron),
   .is-collapsed .sidebar-footer :deep(.profile-name) {
     display: none;
   }
 
+  .is-collapsed .theme-toggle,
   .is-collapsed .sidebar-footer :deep(.language-button),
   .is-collapsed .sidebar-footer :deep(.profile-button) {
     justify-content: center;

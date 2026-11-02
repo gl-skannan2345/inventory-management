@@ -2,6 +2,8 @@ export default {
   // Navigation
   nav: {
     overview: '概要',
+    themeToDark: 'ダークモードに切り替え',
+    themeToLight: 'ライトモードに切り替え',
     inventory: '在庫',
     orders: '注文',
     finance: '財務',

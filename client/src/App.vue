@@ -232,7 +232,7 @@ export default {
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background: var(--color-bg);
-  color: #1e293b;
+  color: var(--color-text-body);
   font-size: var(--font-size-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -350,7 +350,7 @@ body {
 }
 
 .page-header p {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.938rem;
 }
 
@@ -365,17 +365,17 @@ body {
   background: var(--color-surface);
   padding: var(--space-6);
   border-radius: var(--radius-lg);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
   transition: all 0.2s ease;
 }
 
 .stat-card:hover {
-  border-color: #cbd5e1;
+  border-color: var(--color-border-strong);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .stat-label {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -386,7 +386,7 @@ body {
 .stat-value {
   font-size: 2.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-text);
   letter-spacing: -0.025em;
 }
 
@@ -395,19 +395,19 @@ body {
 }
 
 .stat-card.success .stat-value {
-  color: #059669;
+  color: var(--color-success);
 }
 
 .stat-card.danger .stat-value {
-  color: #dc2626;
+  color: var(--color-danger);
 }
 
 .stat-card.info .stat-value {
-  color: #2563eb;
+  color: var(--color-info);
 }
 
 .card {
-  background: white;
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
   border: 1px solid var(--color-border);
@@ -442,16 +442,16 @@ table {
 }
 
 thead {
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--color-surface-muted);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 
 th {
   text-align: left;
   padding: 0.5rem 0.75rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--color-text-secondary);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -459,8 +459,8 @@ th {
 
 td {
   padding: 0.5rem 0.75rem;
-  border-top: 1px solid #f1f5f9;
-  color: #334155;
+  border-top: 1px solid var(--color-border-subtle);
+  color: var(--color-text-cell);
   font-size: 0.875rem;
 }
 
@@ -469,7 +469,7 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background: #f8fafc;
+  background: var(--color-surface-muted);
 }
 
 .badge {
@@ -546,7 +546,7 @@ tbody tr:hover {
 .loading {
   text-align: center;
   padding: 3rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.938rem;
 }
 

@@ -2,6 +2,8 @@ export default {
   // Navigation
   nav: {
     overview: 'Overview',
+    themeToDark: 'Switch to dark mode',
+    themeToLight: 'Switch to light mode',
     inventory: 'Inventory',
     orders: 'Orders',
     finance: 'Finance',

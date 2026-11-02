@@ -11,6 +11,7 @@
       <div class="card">
         <div class="card-header">
           <h3 class="card-title">{{ t('inventory.stockLevels') }} ({{ filteredItems.length }} {{ t('inventory.skus') }})</h3>
+          <div class="header-actions">
           <div class="search-box">
             <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
@@ -31,6 +32,15 @@
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
               </svg>
             </button>
+          </div>
+          <button
+            type="button"
+            class="export-btn"
+            :disabled="filteredItems.length === 0"
+            @click="exportCsv"
+          >
+            {{ t('inventory.exportCsv') }}
+          </button>
           </div>
         </div>
         <div class="table-container">
@@ -196,6 +206,64 @@ export default {
       return categoryMap[category] || category
     }
 
+    // RFC 4180: quote fields containing comma, double quote, or newline; double inner quotes
+    const escapeCsvField = (value) => {
+      const str = String(value ?? '')
+      return /[",\r\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str
+    }
+
+    // Exports the rows currently shown (filteredItems), so search and filters are respected
+    const exportCsv = () => {
+      if (filteredItems.value.length === 0) return
+
+      const headers = [
+        t('inventory.table.sku'),
+        t('inventory.table.itemName'),
+        t('inventory.table.category'),
+        t('inventory.table.quantityOnHand'),
+        t('inventory.table.reorderPoint'),
+        t('inventory.table.unitCost'),
+        t('inventory.table.totalValue'),
+        t('inventory.table.location'),
+        t('inventory.table.status')
+      ]
+
+      // Numbers are written raw (no currency symbol or thousands separators)
+      // so spreadsheets parse them as numeric cells
+      const rows = filteredItems.value.map(item => [
+        item.sku,
+        translateProductName(item.name),
+        translateCategory(item.category),
+        item.quantity_on_hand,
+        item.reorder_point,
+        item.unit_cost.toFixed(2),
+        (item.quantity_on_hand * item.unit_cost).toFixed(2),
+        translateWarehouse(item.location),
+        getStockStatus(item)
+      ])
+
+      const body = [headers, ...rows]
+        .map(row => row.map(escapeCsvField).join(','))
+        .join('\r\n')
+
+      // UTF-8 BOM: without it Excel assumes a legacy encoding and garbles Japanese text
+      const blob = new Blob(['\uFEFF' + body], { type: 'text/csv;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+
+      // Local date (not toISOString, which is UTC and can show the wrong day)
+      const now = new Date()
+      const pad = (n) => String(n).padStart(2, '0')
+      const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
+
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `inventory-${dateStr}.csv`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    }
+
     const showItemDetail = (item) => {
       selectedItem.value = item
       showItemModal.value = true
@@ -216,6 +284,7 @@ export default {
       showItemModal,
       selectedItem,
       showItemDetail,
+      exportCsv,
       currencySymbol,
       translateProductName,
       translateWarehouse
@@ -252,6 +321,36 @@ export default {
   font-weight: 600;
   color: #0f172a;
   margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.export-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: white;
+  color: #0f172a;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.export-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #64748b;
+}
+
+.export-btn:disabled {
+  color: #94a3b8;
+  background: #f8fafc;
+  cursor: not-allowed;
 }
 
 .search-box {

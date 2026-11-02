@@ -1,0 +1,3 @@
+# Vue single-file components keep their hand-written layout. Prettier would
+# reflow their templates and styles, which adds diff noise without fixing anything.
+**/*.vue

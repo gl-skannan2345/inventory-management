@@ -2,6 +2,15 @@ import axios from 'axios'
 
 const API_BASE_URL = 'http://localhost:8001/api'
 
+// Builds axios params, skipping unset and 'all' values
+const buildReportParams = (filters) => {
+  const params = {}
+  for (const key of ['warehouse', 'category', 'status', 'month']) {
+    if (filters[key] && filters[key] !== 'all') params[key] = filters[key]
+  }
+  return params
+}
+
 export const api = {
   async getInventory(filters = {}) {
     const params = new URLSearchParams()
@@ -111,7 +120,24 @@ export const api = {
 
   async createRestockingOrder(items) {
     // items: [{ sku, quantity }]
-    const response = await axios.post(`${API_BASE_URL}/restocking/orders`, { items })
+    const response = await axios.post(`${API_BASE_URL}/restocking/orders`, {
+      items
+    })
+    return response.data
+  },
+
+  // Report endpoints accept the same filter params as orders
+  async getQuarterlyReports(filters = {}) {
+    const response = await axios.get(`${API_BASE_URL}/reports/quarterly`, {
+      params: buildReportParams(filters)
+    })
+    return response.data
+  },
+
+  async getMonthlyTrends(filters = {}) {
+    const response = await axios.get(`${API_BASE_URL}/reports/monthly-trends`, {
+      params: buildReportParams(filters)
+    })
     return response.data
   }
 }

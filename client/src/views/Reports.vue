@@ -323,14 +323,14 @@ export default {
 
 .card {
   background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-5);
 }
 
 .card-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-4);
 }
 
 .card-title {
@@ -373,7 +373,7 @@ export default {
   align-items: flex-end;
   justify-content: space-around;
   height: 250px;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .bar-wrapper {
@@ -416,8 +416,8 @@ export default {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
 }
 
 .stat-card {
@@ -484,5 +484,12 @@ export default {
   padding: 1rem;
   border-radius: 8px;
   margin: 1rem 0;
+}
+
+@media (max-width: 767px) {
+  .chart-container {
+    padding: var(--space-4) 0;
+    overflow-x: auto;
+  }
 }
 </style>

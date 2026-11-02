@@ -2,6 +2,9 @@
   <div class="language-switcher">
     <button
       class="language-button"
+      :aria-label="localeName"
+      aria-haspopup="true"
+      :aria-expanded="isDropdownOpen ? 'true' : 'false'"
       @click="toggleDropdown"
       @blur="handleBlur"
     >

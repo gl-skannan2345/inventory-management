@@ -519,7 +519,8 @@ export default {
 
 .chart-legend {
   display: flex;
-  gap: 1.5rem;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
   font-size: 0.875rem;
 }
 
@@ -694,7 +695,7 @@ export default {
 
 .two-column-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(450px, 100%), 1fr));
   gap: 1.75rem;
 }
 
@@ -848,5 +849,11 @@ export default {
 
 .text-right {
   text-align: right;
+}
+
+@media (max-width: 767px) {
+  .chart-container {
+    overflow-x: auto;
+  }
 }
 </style>

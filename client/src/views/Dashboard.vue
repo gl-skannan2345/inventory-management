@@ -1268,4 +1268,15 @@ export default {
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
 }
+
+@media (max-width: 767px) {
+  .charts-grid,
+  .order-health-container {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .chart-content {
+    padding: var(--space-2) 0;
+  }
+}
 </style>
